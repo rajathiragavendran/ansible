@@ -1,0 +1,10 @@
+---
+- name: installing tree using host scope variable
+  hosts: server2
+  tasks:
+    - name: tree installing
+      apt:
+          name: "{{a}}"
+          state: "{{b}}"
+          update_cache: "{{c}}"
+...

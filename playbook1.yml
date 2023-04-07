@@ -1,0 +1,37 @@
+---
+- name: configuring tomcat
+  hosts: server1
+  vars:
+    - a: tomcat9
+    - b: present
+    - c: yes
+  tasks:
+   - name: Installing tomcat9
+     apt:
+      name: "{{a}}"
+      state: "{{b}}"
+      update_cache: "{{c}}"
+   - name: Installing tomcat9 admin
+     apt:
+      name: tomcat9-admin
+      state: present
+   - name: copy the xml file to tomcat folder
+     copy:
+      src: tomcat-users.xml
+      dest: /etc/tomcat9
+   - name: restarting tomcat 
+     service:
+      name: "{{a}}"
+      state: restarted
+   - name: pause for a min
+     pause:
+       minutes: 1
+   - name: checking server1 url
+     uri:
+      url: http://172.31.0.69:8080
+      status_code: 200
+   - name: checking server2 url
+     uri:
+       url: http://172.31.2.171:8080
+       status_code: 200
+...

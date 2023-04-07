@@ -1,0 +1,57 @@
+---
+- name: installing jenkins and necessary softwares at different servers
+  hosts: jenkinsserver
+  become: yes
+  gather_facts: false
+  tasks:
+   - name: Installing other softwares at jenkins serrver
+     apt:
+          name: "{{item.a}}"
+          state: present
+          update_cache: "{{item.b}}"
+     with_items:
+       - {a: openjdk-11-jdk,b: yes}
+       - {a: git,b: no}
+       - {a: maven,b: no}
+     notify: downloading jenkins war file
+  handlers:     
+   - name: downloading jenkins war file
+     get_url:
+        url: https://get.jenkins.io/war/2.397/jenkins.war
+        dest: /home/ubuntu
+- name: installing softwars at qa and prod server
+  hosts: server3
+  gather_facts: false
+  become: yes
+  vars:
+    - a: tomcat9
+  tasks:
+    - name: installing tomcat9 and tomcat9-admin
+      apt:
+        name: "{{item.a}}"
+        state: present
+        update_cache: "{{item.b}}"
+      with_items:
+        - {a: tomcat9,b: yes}
+        - {a: tomcat9-admin,b: no}       
+    - name: copy the xml file to tomcat folder
+      copy:
+          src: tomcat-users.xml
+          dest: /etc/tomcat9 
+    - name: restart tomcat9
+      service:
+          name: "{{a}}"
+          state: restarted
+    - name: pause for a min
+      pause:
+         minutes: 1
+      tags: user_pause
+    - name: checking qa and prod server url
+      uri:
+        url: "{{item}}"
+        status_code: 200
+      with_items:
+        - http://172.31.0.69:8080
+        - http://172.31.2.171:8080
+...
+
