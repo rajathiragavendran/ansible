@@ -1,0 +1,50 @@
+---
+- name: error handling
+  hosts: server3
+  gather_facts: false
+  become: yes
+  vars:
+    - a: tomcat9
+  tasks:
+    - block:
+        - name: installing tomcat9 and tomcat9-admin
+          apt:
+            name: "{{item.a}}"
+            state: present
+            update_cache: "{{item.b}}"
+          with_items:
+            - {a: tomcat9,b: yes}
+            - {a: tomcat9-admin,b: no}       
+        - name: copy the xml file to tomcat folder
+          copy:
+            src: tomcat-users.xml
+            dest: /etc/tomcat9 
+        - name: restart tomcat9
+          service:
+            name: "{{a}}"
+            state: restarted 
+        - name: checking qa and prod server url
+          uri:
+            url: "{{item}}"
+            status_code: 200
+          with_items:
+            - http://172.31.0.69:8080
+            - http://172.31.2.171:8080
+      rescue:
+        - name: pause for a min
+          pause:
+             minutes: 1
+          tags: user_pause
+        - name: checking qa and prod server url
+          uri:
+            url: "{{item}}"
+            status_code: 200
+          with_items:
+            - http://172.31.0.69:8080
+            - http://172.31.2.171:8080
+      always:
+        - name: print success message
+          debug:
+            msg: "tomcat 9 installed and working successfully"
+...
+
