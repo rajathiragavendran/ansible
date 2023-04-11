@@ -1,0 +1,13 @@
+---
+- name: configuring tomcat using host scope variable and child playbook
+  hosts: server3
+  tasks: 
+    - name: call multiple child playbook in parent playbooks using looping
+      include: "{{item}}"
+      with_items:
+        - installtomcat.yml
+        - copyxml.yml
+        - restarttomcat.yml
+        - userpause.yml
+        - checkurl.yml
+...

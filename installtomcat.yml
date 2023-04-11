@@ -1,0 +1,10 @@
+---
+- name: installing tomcat9 and tomcat9-admin
+  apt:
+        name: "{{item.a}}"
+        state: present
+        update_cache: "{{item.b}}"
+  with_items:
+        - {a: "{{a}}",b: "{{b}}"}
+        - {a: "{{c}}",b: "{{d}}"}
+...

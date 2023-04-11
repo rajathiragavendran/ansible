@@ -1,0 +1,11 @@
+---
+a: tomcat9
+b: yes
+c: tomcat9-admin
+d: no
+e: tomcat-users.xml
+f: /etc/tomcat9
+g: restarted
+h: http://172.31.0.69:8080
+i: http://172.31.2.171:8080
+...

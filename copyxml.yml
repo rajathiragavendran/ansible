@@ -1,0 +1,6 @@
+---
+- name: copy the xml file to tomcat folder
+  copy:
+          src: "{{e}}"
+          dest: "{{f}}"
+...

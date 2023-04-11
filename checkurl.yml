@@ -1,0 +1,9 @@
+---
+- name: checking qa and prod server url
+  uri:
+        url: "{{item.a}}"
+        status_code: 200
+  with_items:
+    - {a: "{{h}}"}
+    - {a: "{{i}}"}
+...
