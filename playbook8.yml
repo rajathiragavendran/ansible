@@ -1,0 +1,50 @@
+---
+- name: configure apache2/httpd based os
+  hosts: all
+  tasks:
+    - name: install apache2 on ubuntu server
+      apt:
+          name: apache2
+          state: present
+          update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+    - name: install httpd on redhat server
+      yum:
+        name: httpd
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "RedHat"
+    - name: edit the iindex file on ubuntu
+      copy:
+        content: "welcome to index.html"
+        dest: /var/www/html/index.html
+      when: ansible_distribution == "Ubuntu"
+      notify: restart apache2
+    - name: edit the iindex file on redhat
+      copy:
+        content: "welcome to index.html"
+        dest: /var/www/html/index.html
+      when: ansible_distribution == "RedHat"
+      notify: restart httpd
+  handlers:      
+    - name: restart apache2
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_distribution == "Ubuntu"
+    - name: restart httpd
+      service:
+        name: httpd
+        state: restarted
+      when: ansible_distribution == "RedHat"
+- name: check url at apache and httpd server
+  hosts: all
+  tasks:
+    - name: check url response
+      uri:
+        url: "{{item}}"
+        status_code: 200
+      with_items:
+        - http://172.31.0.69
+        - http://172.31.2.171
+...

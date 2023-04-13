@@ -1,0 +1,25 @@
+---
+- name : check if a file is executable if so delete it
+  hosts: all
+  tasks:
+    - name: creating a file
+      file:
+        name: /tmp/file1
+        state: touch
+    - name: change the file permission
+      file:
+        name: /tmp/file1
+        mode: 770
+    - name: check of file info
+      stat:
+        path: /tmp/file1
+      register: result
+    - name: display the output of the above module
+      debug:
+        var: result
+    - name: delete if the file is executable
+      file:
+        name: /tmp/file1
+        state: absent
+      when: result.stat.executable == true
+...  

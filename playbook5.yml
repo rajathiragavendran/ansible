@@ -1,0 +1,19 @@
+---
+- name: capturing os information
+  hosts: server3
+  tasks:
+    - block:
+        - name: capture os info
+          debug:
+            msg: "{{ansible_distribution}}"
+        - name: cpature os version
+          debug:
+            msg: "{{ansible_distribution_version}}"
+        - name: capture os major version
+          debug:
+            msg: "{{ansible_distribution_major_version}}"
+      rescue:
+        - name: failed in other os
+          debug:
+            msg: "failed in other os"
+...
